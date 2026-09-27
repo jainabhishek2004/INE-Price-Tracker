@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { catalogStatus, reviewSummary, searchProducts, upsertProduct } from '../db/repositories/products.repository.js';
+import { catalogStatus, reviewSummary, searchProducts, upsertProduct, listProducts } from '../db/repositories/products.repository.js';
 import { requireSecret } from '../middleware/require-secret.js';
 import { getItem } from '../scraper/store.js';
 import { isCatalogSyncing, startCatalogSync } from '../services/catalog.service.js';
@@ -33,6 +33,25 @@ catalogRoutes.get('/catalog/search', async (req, res) => {
 catalogRoutes.post('/catalog/sync', requireSecret, (_req, res) => {
   if (!startCatalogSync({ log })) throw new HttpError(409, 'sync_in_progress', 'A catalogue sync is already running');
   res.status(202).json({ status: 'started' });
+});
+
+catalogRoutes.get('/catalog/products', async (req, res) => {
+  const page = queryInt(req.query.page, 'page', { min: 1, max: 1000, fallback: 1 });
+  const pageSize = queryInt(req.query.pageSize, 'pageSize', { min: 1, max: 100, fallback: 24 });
+  
+  const catalog = await catalogStatus();
+  if (catalog.count === 0) {
+    startCatalogSync({ log });
+    throw new HttpError(503, 'catalog_syncing', 'The product catalogue is loading; try again in about two minutes');
+  }
+  
+  if (Date.now() - new Date(catalog.synced_at).getTime() > CATALOG_MAX_AGE_MS) startCatalogSync({ log });
+  
+  const results = await listProducts(page, pageSize);
+  res.json({
+    catalog: { count: catalog.count, syncedAt: catalog.synced_at, syncing: isCatalogSyncing() },
+    results: results.map(row => ({ storeProductId: row.store_product_id, name: row.name, brand: row.brand, category: row.category, sku: row.sku })),
+  });
 });
 
 // Live from the store, so the options are always current. Also refreshes the cached product details.

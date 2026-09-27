@@ -36,6 +36,17 @@ export async function searchProducts(text, limit) {
   return rows;
 }
 
+export async function listProducts(page, pageSize) {
+  const offset = (page - 1) * pageSize;
+  const { rows } = await query(
+    `select store_product_id, name, brand, category, sku from products
+     order by name, store_product_id
+     limit $1 offset $2`,
+    [pageSize, offset]
+  );
+  return rows;
+}
+
 // The review_summary column: review count and average rating.
 export function reviewSummary(reviews = []) {
   const ratings = reviews.map(review => review.rating).filter(Number.isFinite);
