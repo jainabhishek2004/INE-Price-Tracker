@@ -1,0 +1,31 @@
+{
+  "name": "@pricepulse/server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PricePulse server: Express API, scrape runner, and Playwright scraper for the INE mock store.",
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch --env-file-if-exists=.env src/server.js",
+    "scrape": "node --env-file-if-exists=.env src/cli.js",
+    "migrate": "node --env-file-if-exists=.env scripts/migrate.js",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0",
+    "vitest": "^5.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "linkedom": "^0.18.13",
+    "pg": "^8.23.0",
+    "playwright": "1.63.0"
+  }
+}
