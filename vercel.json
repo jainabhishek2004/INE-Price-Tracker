@@ -1,0 +1,8 @@
+{
+  "installCommand": "cd INE && pnpm install --frozen-lockfile",
+  "buildCommand": "cd INE/apps/frontend && pnpm build",
+  "outputDirectory": "INE/apps/frontend/dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ine-price-tracker",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "install:frontend": "cd INE && pnpm install --frozen-lockfile",
+    "build:frontend": "cd INE/apps/frontend && pnpm build"
+  }
+}

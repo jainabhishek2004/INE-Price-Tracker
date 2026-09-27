@@ -1,0 +1,5 @@
+packages:
+  - "INE/apps/*"
+  - "INE/packages/*"
+
+sharedWorkspaceLockfile: false
