@@ -1,8 +1,6 @@
 import type { SvgIconComponent } from '@mui/icons-material';
 import AddOutlined from '@mui/icons-material/AddOutlined';
-import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
 import DownloadOutlined from '@mui/icons-material/DownloadOutlined';
-import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import SearchOutlined from '@mui/icons-material/SearchOutlined';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -16,7 +14,6 @@ import Typography from '@mui/material/Typography';
 import { lazy, Suspense, useId, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCsvExport } from '../../features/scraping/hooks/useCsvExport';
-import { useThemeToggle } from '../../theme/useThemeToggle';
 import { matchCommands, moveActive, type PaletteCommand } from './commands';
 import { NAV_ITEMS } from './navigation';
 
@@ -31,7 +28,6 @@ type CommandPaletteProps = { open: boolean; onOpenChange: (open: boolean) => voi
 // endpoint needs the cron secret and is never called from the browser.
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const navigate = useNavigate();
-  const theme = useThemeToggle();
   const exportCsv = useCsvExport();
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -51,15 +47,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         setTrackLoaded(true);
         setTracking(true);
       },
-    },
-    {
-      id: 'theme',
-      label: 'Toggle Theme',
-      keywords: 'dark light mode appearance colour color',
-      group: 'Actions',
-      icon: theme.isDark ? LightModeOutlined : DarkModeOutlined,
-      hint: theme.isDark ? 'Switch to light' : 'Switch to dark',
-      run: theme.toggle,
     },
     { id: 'export', label: 'Export CSV', keywords: 'download scrape history attempts', group: 'Actions', icon: DownloadOutlined, run: () => exportCsv.mutate() },
   ];

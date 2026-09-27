@@ -13,8 +13,7 @@ export type ProductInfo = {
   reviewSummary: ReviewSummary | null;
 };
 
-// Live details from the store when they loaded; otherwise the copy PricePulse stored when the product was tracked,
-// so a store outage does not hide a tracked product.
+// Prefer live store details when available; otherwise fall back to the last tracked snapshot so a store outage does not hide the product.
 export function productInfo(live: Product | undefined, stored: TrackedProduct | undefined): ProductInfo | null {
   if (live) {
     return {

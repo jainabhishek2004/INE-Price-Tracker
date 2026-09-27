@@ -67,7 +67,7 @@ function SidebarContent({ collapsed, onToggleCollapsed, onNavigate }: SidebarCon
         <BrandMark />
         {!collapsed && (
           <Typography component="span" sx={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>
-            PricePulse
+            INE Dashboard
           </Typography>
         )}
       </Box>

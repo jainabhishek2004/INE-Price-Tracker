@@ -24,18 +24,38 @@ export function CatalogProductCard({ product, tracked, onTrack }: CatalogProduct
   const meta = [product.brand, product.category].filter(Boolean).join(' · ');
 
   return (
-    <Card component="article" aria-label={product.name} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.25, minWidth: 0 }}>
+    <Card
+      component="article"
+      aria-label={product.name}
+      sx={{
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1.25,
+        minWidth: 0,
+        borderColor: 'divider',
+        backgroundColor: 'background.paper',
+        boxShadow: 'none',
+      }}
+    >
       <div>
         <Link
           component={RouterLink}
           to={productPath(product.storeProductId)}
           underline="hover"
           color="text.primary"
-          sx={{ fontWeight: 600, display: 'block', overflowWrap: 'anywhere' }}
+          sx={{
+            fontWeight: 700,
+            display: 'block',
+            overflowWrap: 'anywhere',
+            lineHeight: 1.35,
+            fontSize: '1.05rem',
+            letterSpacing: '-0.02em',
+          }}
         >
           {product.name}
         </Link>
-        <Typography variant="caption" component="p" sx={{ color: 'text.secondary' }}>
+        <Typography variant="caption" component="p" sx={{ color: 'text.secondary', mt: 0.5 }}>
           ID {product.storeProductId}
           {meta && ` · ${meta}`}
         </Typography>
@@ -46,9 +66,14 @@ export function CatalogProductCard({ product, tracked, onTrack }: CatalogProduct
         )}
       </div>
 
-      <Stack direction="row" useFlexGap spacing={0.75} sx={{ flexWrap: 'wrap' }}>
+      <Stack direction="row" useFlexGap spacing={0.75} sx={{ flexWrap: 'wrap', minHeight: 32 }}>
         {optionCount !== null && (
-          <Chip size="small" variant="outlined" label={`${optionCount} ${optionCount === 1 ? 'option' : 'options'}`} />
+          <Chip
+            size="small"
+            variant="outlined"
+            sx={{ backgroundColor: '#F3F4F6', borderColor: '#D1D5DB', color: 'text.primary', fontWeight: 500 }}
+            label={`${optionCount} ${optionCount === 1 ? 'option' : 'options'}`}
+          />
         )}
         {tracked.size > 0 ? (
           <Chip
@@ -57,9 +82,15 @@ export function CatalogProductCard({ product, tracked, onTrack }: CatalogProduct
             icon={<CheckOutlined />}
             label={tracked.size === 1 ? `Tracking ${trackedLabels[0]}` : `Tracking ${tracked.size} options`}
             title={trackedLabels.join(', ')}
+            sx={{ fontWeight: 600 }}
           />
         ) : (
-          <Chip size="small" variant="outlined" label="Not tracked" />
+          <Chip
+            size="small"
+            variant="outlined"
+            label="Not tracked"
+            sx={{ backgroundColor: '#F3F4F6', borderColor: '#D1D5DB', color: 'text.primary', fontWeight: 500 }}
+          />
         )}
       </Stack>
 
@@ -70,7 +101,15 @@ export function CatalogProductCard({ product, tracked, onTrack }: CatalogProduct
         disabled={action.disabled}
         onClick={() => onTrack(product)}
         aria-label={`${action.label}: ${product.name}`}
-        sx={{ mt: 'auto', alignSelf: 'flex-start' }}
+        sx={{
+          mt: 'auto',
+          alignSelf: 'stretch',
+          justifyContent: 'center',
+          fontWeight: 600,
+          borderRadius: 10,
+          minHeight: 36,
+          ...(tracked.size > 0 ? { borderColor: 'divider', color: 'text.primary', backgroundColor: '#F9FAFB' } : {}),
+        }}
       >
         {action.label}
       </Button>

@@ -6,9 +6,8 @@ import { LoadingSkeleton } from '../common/LoadingSkeleton';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 
-const COLLAPSED_KEY = 'pricepulse.sidebarCollapsed';
+const COLLAPSED_KEY = 'ine.sidebarCollapsed';
 
-// Loaded on first use, so its actions (CSV export, the tracking dialog) add nothing to the first page load.
 const CommandPalette = lazy(() => import('./CommandPalette').then(m => ({ default: m.CommandPalette })));
 
 export function AppLayout() {
@@ -22,7 +21,6 @@ export function AppLayout() {
     setCommandsOpen(open);
   };
 
-  // Ctrl+K (⌘K on a Mac) toggles the command palette from anywhere.
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === 'k') {

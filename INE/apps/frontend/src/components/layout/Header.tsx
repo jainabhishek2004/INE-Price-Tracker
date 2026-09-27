@@ -1,5 +1,3 @@
-import DarkModeOutlined from '@mui/icons-material/DarkModeOutlined';
-import LightModeOutlined from '@mui/icons-material/LightModeOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchOutlined from '@mui/icons-material/SearchOutlined';
 import AppBar from '@mui/material/AppBar';
@@ -9,10 +7,8 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import { Link as RouterLink, useMatches } from 'react-router-dom';
-import { useThemeToggle } from '../../theme/useThemeToggle';
 
 type Crumb = { title: string; pathname: string };
 
@@ -68,21 +64,7 @@ export function Header({ onOpenNavigation, onOpenCommands }: { onOpenNavigation:
         <IconButton onClick={onOpenCommands} aria-label="Commands" aria-keyshortcuts="Control+K Meta+K" sx={{ display: { sm: 'none' } }}>
           <SearchOutlined fontSize="small" />
         </IconButton>
-        <ThemeToggle />
       </Toolbar>
     </AppBar>
-  );
-}
-
-function ThemeToggle() {
-  const { ready, isDark, toggle } = useThemeToggle();
-  if (!ready) return null;
-  const label = isDark ? 'Switch to light theme' : 'Switch to dark theme';
-  return (
-    <Tooltip title={label}>
-      <IconButton onClick={toggle} aria-label={label}>
-        {isDark ? <LightModeOutlined fontSize="small" /> : <DarkModeOutlined fontSize="small" />}
-      </IconButton>
-    </Tooltip>
   );
 }

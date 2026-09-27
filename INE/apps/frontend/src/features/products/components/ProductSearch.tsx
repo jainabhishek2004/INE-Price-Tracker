@@ -97,7 +97,7 @@ export function ProductSearch({ onSelect, autoFocus = false }: ProductSearchProp
           <EmptyState
             icon={HourglassEmptyOutlined}
             title="The product catalogue is loading"
-            description="PricePulse is reading the store’s catalogue for the first time. Search again in about two minutes."
+            description="The store catalogue is still syncing. Search again in a couple of minutes."
             action={<Button onClick={() => search.refetch()}>Try again</Button>}
           />
         )}

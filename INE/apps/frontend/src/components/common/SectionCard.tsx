@@ -6,7 +6,6 @@ import { useId, type ReactNode } from 'react';
 
 type SectionCardProps = { title: string; description?: ReactNode; action?: ReactNode; children?: ReactNode };
 
-// A titled card section: the heading labels the region, the action (filters, links) sits beside it.
 export function SectionCard({ title, description, action, children }: SectionCardProps) {
   const headingId = useId();
   return (

@@ -13,8 +13,6 @@ import Box from '@mui/material/Box';
 
 type Tone = 'success' | 'warning' | 'error' | 'neutral';
 
-// Scrape outcomes (success / retried / failed, or running while unfinished), stock states and API connection states.
-// Each has a label and an icon, never colour alone.
 const STATUSES = {
   success: { label: 'Success', tone: 'success', icon: CheckCircleOutlineOutlined },
   retried: { label: 'Retried', tone: 'warning', icon: Autorenew },

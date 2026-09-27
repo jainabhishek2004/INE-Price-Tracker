@@ -77,13 +77,24 @@ export function TrackedProductsTable({ items }: { items: TrackedProduct[] }) {
       {
         field: 'stock',
         headerName: 'Stock',
-        minWidth: 120,
+        minWidth: 150,
         valueGetter: (_, row) => row.latest?.stock ?? null,
         renderCell: ({ row }) => (
-          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center', minWidth: 0, width: '100%', overflow: 'visible', flexWrap: 'nowrap' }}>
             <StatusBadge status={stockStatus(row.latest?.stock)} />
             {row.latest && row.latest.stock > 0 && (
-              <Typography variant="body2" sx={{ color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.primary',
+                  fontWeight: 700,
+                  fontVariantNumeric: 'tabular-nums',
+                  letterSpacing: '-0.01em',
+                  whiteSpace: 'nowrap',
+                  minWidth: 0,
+                  overflow: 'visible',
+                }}
+              >
                 {row.latest.stock}
               </Typography>
             )}
@@ -167,7 +178,9 @@ export function TrackedProductsTable({ items }: { items: TrackedProduct[] }) {
           border: 0,
           '--DataGrid-containerBackground': 'transparent',
           '& .MuiDataGrid-columnHeaderTitle': { fontSize: '0.75rem', fontWeight: 600, color: 'text.secondary' },
-          '& .MuiDataGrid-cell': { display: 'flex', alignItems: 'center', lineHeight: 1.43 },
+          '& .MuiDataGrid-cell': { display: 'flex', alignItems: 'center', lineHeight: 1.43, overflow: 'visible' },
+          '& .MuiDataGrid-row': { overflow: 'visible' },
+          '& .MuiDataGrid-virtualScroller': { overflowX: 'auto', overflowY: 'auto' },
         }}
       />
       <StopTrackingDialog item={pendingRemoval} open={confirmOpen} onClose={() => setConfirmOpen(false)} onConfirm={untrack.mutate} />

@@ -20,7 +20,7 @@ export function ProductsPage() {
     <>
       <PageHeader
         title="Tracked Products"
-        subtitle="Find a product in the store catalogue, or manage the options PricePulse already tracks."
+        subtitle="Find a product in the store catalogue, or manage the options already tracked."
         actions={
           <Button variant="contained" startIcon={<Add />} onClick={() => setTracking(true)}>
             Track Product
