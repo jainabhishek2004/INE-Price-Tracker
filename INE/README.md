@@ -8,11 +8,104 @@ The repository contains both the frontend dashboard and the backend scraper/work
 
 ## Live Demo
 
-- Frontend: Not specified in the repository docs; intended for Vercel.
-- Backend API: https://pricepulse-bgxj.onrender.com
+- Frontend: https://frontend-ine.vercel.app/
+- Backend health: https://ine-price-tracker-98l2.onrender.com/api/health
 - GitHub: Not specified in the repository docs.
 - Demo Recording: Not included in the repository; must be recorded locally in headed mode.
 - INE Mock Store: https://demo.inelabteamdev.com/
+
+## Setup instructions
+
+### Install dependencies
+
+```bash
+cd "c:\Users\jaina\Desktop\ine-price-tracker"
+pnpm install
+```
+
+### Run the frontend
+
+```bash
+cd INE/apps/frontend
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+### Run the backend
+
+```bash
+cd INE/apps/server
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+### Local database for development
+
+```bash
+docker run -d --name pricepulse-pg \
+  -e POSTGRES_USER=pricepulse \
+  -e POSTGRES_PASSWORD=your_password \
+  -e POSTGRES_DB=pricepulse_dev \
+  -p 55432:5432 postgres:17-alpine
+```
+
+Then create a test DB if needed:
+
+```bash
+docker exec pricepulse-pg createdb -U pricepulse pricepulse_test
+```
+
+## Scraping schedule
+
+The app tracks product options on a default 120-minute interval and aligns each product to UTC slot boundaries. This keeps the schedule stable and prevents drift over time.
+
+The scheduling logic is:
+
+- interval options: 60, 120, 240, 360, 720, 1440 minutes
+- default interval: 120 minutes
+- 5-minute tolerance for early cron calls
+- next scrape times are calculated after the current slot has been served
+
+In production, external cron jobs trigger the backend at the top of each hour, while a wake job at minutes 50 and 55 keeps the sleeping Render instance active before the scrape run.
+
+## Required environment variables
+
+### Frontend
+
+```env
+VITE_API_URL=http://localhost:3000/api
+```
+
+### Backend
+
+```env
+DATABASE_URL=postgresql://user:password@host:5432/dbname?sslmode=verify-full&sslrootcert=certs/supabase-prod-ca-2021.crt
+STORE_BASE_URL=https://demo.inelabteamdev.com
+CORS_ORIGINS=http://localhost:5173,https://frontend-ine.vercel.app
+CRON_SECRET=your_shared_secret
+```
+
+Optional scraper and scheduler settings that are supported by the actual server config:
+
+```env
+SCRAPER_HEADLESS=true
+SCRAPER_BROWSER_CHANNEL=chrome
+SCRAPER_MAX_TRIES=3
+SCRAPER_RETRY_BASE_DELAY_MS=5000
+SCRAPER_TRY_TIMEOUT_MS=120000
+SCRAPER_NAV_TIMEOUT_MS=30000
+SCRAPER_QUOTE_TIMEOUT_MS=60000
+SCRAPER_PENDING_RECHECKS=3
+SCHEDULER_TOLERANCE_MINUTES=5
+STALE_RUN_MINUTES=15
+RUNNER_PRODUCT_GAP_MS=4000
+MANUAL_SCRAPE_COOLDOWN_MINUTES=10
+MAX_TRACKED=12
+STORE_REQUEST_GAP_MS=1100
+STORE_TIMEOUT_MS=10000
+STORE_MAX_TRIES=3
+STORE_RETRY_BASE_DELAY_MS=1000
+```
 
 ## Assignment Requirements
 
