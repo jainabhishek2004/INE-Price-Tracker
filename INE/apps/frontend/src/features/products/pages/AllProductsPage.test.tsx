@@ -97,6 +97,27 @@ describe('All Products', () => {
     expect(listCatalog).toHaveBeenCalledWith('', 1, 24);
   });
 
+  it('does not render undefined option counts when the API omits them', async () => {
+    vi.mocked(listCatalog).mockImplementation(async () =>
+      page({
+        results: [{
+          storeProductId: 2891,
+          name: 'Halvard Drawing Tablet Arc',
+          brand: 'Halvard',
+          category: 'Tablets',
+          sku: 'SK-2891-HA',
+          optionCount: undefined,
+        }],
+      }),
+    );
+
+    renderPage();
+
+    expect(await screen.findByRole('article', { name: 'Halvard Drawing Tablet Arc' })).toBeTruthy();
+    expect(screen.queryByText(/undefined/)).toBeNull();
+    expect(screen.getByText('Not tracked')).toBeTruthy();
+  });
+
   it('shows which options are tracked, per option', async () => {
     renderPage();
     expect(await within(await screen.findByRole('article', { name: 'Halvard Drawing Tablet Prime' })).findByText('Tracking 64 GB')).toBeTruthy();
@@ -116,7 +137,7 @@ describe('All Products', () => {
 
   it('pages through the catalogue on the server', async () => {
     renderPage();
-    await screen.findByText('960 products in the store · page 1 of 40');
+    expect(await screen.findByText('960 products in the store · page 1 of 40'));
     fireEvent.click(screen.getByRole('button', { name: 'Go to page 2' }));
     expect(await screen.findByText('960 products in the store · page 2 of 40')).toBeTruthy();
     expect(listCatalog).toHaveBeenLastCalledWith('', 2, 24);

@@ -53,9 +53,12 @@ export const productPath = (storeProductId: number, optionId?: string) =>
 
 // The product's active tracked options, by option id.
 // The Track button of a catalogue product. Tracking is per option, so a product with an option still free keeps it.
-export function trackAction(trackedOptions: number, optionCount: number | null): { label: string; disabled: boolean } {
+export function trackAction(trackedOptions: number, optionCount: number | null | undefined): { label: string; disabled: boolean } {
+  const safeOptionCount = Number.isFinite(optionCount) ? optionCount : null;
   if (trackedOptions === 0) return { label: 'Track Product', disabled: false };
-  if (optionCount !== null && trackedOptions >= optionCount) return { label: 'Tracked', disabled: true };
+  if (safeOptionCount !== null && safeOptionCount !== undefined && trackedOptions >= safeOptionCount) {
+    return { label: 'Tracked', disabled: true };
+  }
   return { label: 'Track another option', disabled: false };
 }
 

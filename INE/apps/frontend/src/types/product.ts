@@ -56,8 +56,8 @@ export type CatalogSearch = {
   results: CatalogProduct[];
 };
 
-// A row of GET /api/catalog/products. The option count is known only once the product's details were fetched.
-export type CatalogListItem = CatalogProduct & { optionCount: number | null };
+// A row of GET /api/catalog/products. Some catalogue rows do not yet have an option count, so the value is optional.
+export type CatalogListItem = CatalogProduct & { optionCount?: number | null };
 
 // One page of the whole catalogue, optionally filtered by name; `total` is the number of products that match.
 export type CatalogPage = {

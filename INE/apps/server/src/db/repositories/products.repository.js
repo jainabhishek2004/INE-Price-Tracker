@@ -27,7 +27,7 @@ export async function searchProducts(text, limit) {
   const words = text.trim().split(/\s+/).map(word => `%${word.replace(/[\\%_]/g, '\\$&')}%`);
   const conditions = words.map((_, i) => `name ilike $${i + 3}`).join(' and ');
   const { rows } = await query(
-    `select store_product_id, name, brand, category, sku from products
+    `select store_product_id, name, brand, category, sku, options from products
      where ${conditions}
      order by (lower(name) like lower($1) || '%') desc, name
      limit $2`,
@@ -36,13 +36,27 @@ export async function searchProducts(text, limit) {
   return rows;
 }
 
-export async function listProducts(page, pageSize) {
+export async function listProducts(page, pageSize, text = '') {
   const offset = (page - 1) * pageSize;
+  const words = text.trim().split(/\s+/).filter(Boolean).map(word => `%${word.replace(/[\\%_]/g, '\\$&')}%`);
+
+  if (!words.length) {
+    const { rows } = await query(
+      `select store_product_id, name, brand, category, sku, options from products
+       order by name, store_product_id
+       limit $1 offset $2`,
+      [pageSize, offset],
+    );
+    return rows;
+  }
+
+  const conditions = words.map((_, i) => `name ilike $${i + 4}`).join(' and ');
   const { rows } = await query(
-    `select store_product_id, name, brand, category, sku from products
-     order by name, store_product_id
-     limit $1 offset $2`,
-    [pageSize, offset]
+    `select store_product_id, name, brand, category, sku, options from products
+     where ${conditions}
+     order by (lower(name) like lower($1) || '%') desc, name, store_product_id
+     limit $2 offset $3`,
+    [text.trim().replace(/[\\%_]/g, '\\$&'), pageSize, offset, ...words],
   );
   return rows;
 }

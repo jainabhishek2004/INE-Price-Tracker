@@ -19,7 +19,8 @@ type CatalogProductCardProps = {
 // Only what the catalogue knows: name, store id, brand, category, SKU and, once fetched, the number of options.
 export function CatalogProductCard({ product, tracked, onTrack }: CatalogProductCardProps) {
   const trackedLabels = [...tracked.values()].map(item => item.optionLabel);
-  const action = trackAction(tracked.size, product.optionCount);
+  const optionCount = Number.isFinite(product.optionCount) ? product.optionCount : null;
+  const action = trackAction(tracked.size, optionCount);
   const meta = [product.brand, product.category].filter(Boolean).join(' · ');
 
   return (
@@ -46,8 +47,8 @@ export function CatalogProductCard({ product, tracked, onTrack }: CatalogProduct
       </div>
 
       <Stack direction="row" useFlexGap spacing={0.75} sx={{ flexWrap: 'wrap' }}>
-        {product.optionCount !== null && (
-          <Chip size="small" variant="outlined" label={`${product.optionCount} ${product.optionCount === 1 ? 'option' : 'options'}`} />
+        {optionCount !== null && (
+          <Chip size="small" variant="outlined" label={`${optionCount} ${optionCount === 1 ? 'option' : 'options'}`} />
         )}
         {tracked.size > 0 ? (
           <Chip

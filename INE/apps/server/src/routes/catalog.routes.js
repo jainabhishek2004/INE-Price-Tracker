@@ -26,7 +26,14 @@ catalogRoutes.get('/catalog/search', async (req, res) => {
   res.json({
     query: q,
     catalog: { count: catalog.count, syncedAt: catalog.synced_at, syncing: isCatalogSyncing() },
-    results: results.map(row => ({ storeProductId: row.store_product_id, name: row.name, brand: row.brand, category: row.category, sku: row.sku })),
+    results: results.map(row => ({
+      storeProductId: row.store_product_id,
+      name: row.name,
+      brand: row.brand,
+      category: row.category,
+      sku: row.sku,
+      optionCount: Array.isArray(row.options) ? row.options.length : null,
+    })),
   });
 });
 
@@ -36,21 +43,35 @@ catalogRoutes.post('/catalog/sync', requireSecret, (_req, res) => {
 });
 
 catalogRoutes.get('/catalog/products', async (req, res) => {
+  const q = String(req.query.q ?? '').trim();
   const page = queryInt(req.query.page, 'page', { min: 1, max: 1000, fallback: 1 });
   const pageSize = queryInt(req.query.pageSize, 'pageSize', { min: 1, max: 100, fallback: 24 });
-  
+
   const catalog = await catalogStatus();
   if (catalog.count === 0) {
     startCatalogSync({ log });
     throw new HttpError(503, 'catalog_syncing', 'The product catalogue is loading; try again in about two minutes');
   }
-  
+
   if (Date.now() - new Date(catalog.synced_at).getTime() > CATALOG_MAX_AGE_MS) startCatalogSync({ log });
-  
-  const results = await listProducts(page, pageSize);
+
+  const results = await listProducts(page, pageSize, q);
+  const total = q ? (await searchProducts(q, 1000)).length : catalog.count;
+
   res.json({
+    query: q,
+    page,
+    pageSize,
+    total,
     catalog: { count: catalog.count, syncedAt: catalog.synced_at, syncing: isCatalogSyncing() },
-    results: results.map(row => ({ storeProductId: row.store_product_id, name: row.name, brand: row.brand, category: row.category, sku: row.sku })),
+    results: results.map(row => ({
+      storeProductId: row.store_product_id,
+      name: row.name,
+      brand: row.brand,
+      category: row.category,
+      sku: row.sku,
+      optionCount: Array.isArray(row.options) ? row.options.length : null,
+    })),
   });
 });
 
