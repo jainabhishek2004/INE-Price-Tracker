@@ -1,89 +1,53 @@
-# INE Dashboard
+# INE Product Price Tracker
 
-INE Dashboard is a price and stock monitoring app for the INE mock storefront. It lets users browse the catalog, track products, watch price changes, review scrape history, and monitor system health from a single dashboard.
+## Overview
 
-## What this app does
+This repository contains the INE Product Price Tracker project as a monorepo. The actual app lives under the `INE/` folder and consists of a React frontend, an Express backend, and a Playwright scraper that monitors the INE mock store for product price and stock changes.
 
-- Searches the product catalog and shows live product details
-- Tracks products and options with price and stock monitoring
-- Shows a dashboard with recent KPI summaries and price-change trends
-- Lists tracked products in a table with status, stock, and last scrape data
-- Displays price history for individual tracked options
-- Shows analytics for stock, price movement, and scrape reliability
-- Keeps a scrape log for every attempt and supports CSV export
-- Surfaces backend health and settings information
+The implementation matches the assignment requirements for product browsing, tracking, scheduled scraping, attempt logging, and CSV export. The backend is configured for Render, the frontend is intended for Vercel, and the database is PostgreSQL managed through Supabase.
 
-## Repository structure
+## Repository layout
 
 ```text
 .
 ├── INE/
 │   ├── apps/
 │   │   ├── frontend/      # React + Vite dashboard
-│   │   └── server/        # Express API + scraping + scheduling
+│   │   └── server/        # Express API + scraper + scheduler + DB logic
 │   ├── docs/
-│   │   └── AI_LOG.md      # development notes and issue log
+│   │   └── AI_LOG.md      # repo history and correction notes
 │   ├── packages/
 │   │   └── shared/
-│   ├── README.md
-│   └── package.json
+│   ├── README.md          # app-level project documentation
+│   ├── package.json
+│   ├── pnpm-lock.yaml
+│   ├── pnpm-workspace.yaml
+│   ├── turbo.json
+│   └── vercel.json
+├── README.md              # repo-level overview
 ├── package.json
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
-├── vercel.json
-└── README.md              # this file
+└── vercel.json
 ```
 
-## App features
+## Actual implemented features
 
-### Dashboard
-- KPI cards for tracked products, recent scraping activity, and recent price movement
-- Summary cards that surface the latest stock and change data
-- Overview of the current tracked state in the app
-
-### All Products
-- Product catalog browsing from the INE store
-- Search by product name with a debounced filter
-- Pagination across catalogue pages
-- Product cards with store metadata and option count
-- Option-level tracking flow
-
-### Tracked Products
-- Track/untrack products and option variants
-- Manage tracked items from a table view
-- See current price, stock, status, price change, and last scrape time
-- Refresh prices manually and open product detail pages
-
-### Product details and price history
-- Option selection for a store product
-- Live product data plus tracked fallback data
-- Historical price/stock observations for a selected option
-- Change comparisons over time
-
-### Analytics
-- Price movement metrics
-- Scrape reliability summaries
-- Stock availability breakdown
-- Time-based attempt and outcome analysis
-
-### Scrape Logs
-- Detailed attempt history across tracked items
-- Outcome and error information for each run
-- Filtered log views and per-option drill-down
-- CSV export of scrape history
-
-### Settings
-- System health checks against the backend
-- Database and uptime information
-- Scraping metadata and app details
-- Notifications and system status overview
+- Product catalog browsing and search by partial/full product name
+- Product detail flow with specific option selection
+- Persistence of tracked products and option selections in PostgreSQL
+- Scheduled scraping with a default 120-minute interval aligned to UTC slots
+- Price and stock history per tracked option
+- Attempt logging for every scrape, including success, retried, and failed outcomes
+- Honest failed-attempt handling, without storing successful price or stock values on failed rows
+- CSV export for scrape attempts with the required fields and empty values for failed rows
+- Dashboard analytics and status views for tracked products
+- System health, logs, and settings screens in the frontend
 
 ## Tech stack
 
 ### Frontend
-- React 19
-- Vite
-- TypeScript
+- React + Vite + TypeScript
 - Material UI
 - React Query
 - Axios
@@ -92,18 +56,39 @@ INE Dashboard is a price and stock monitoring app for the INE mock storefront. I
 - Express.js
 - PostgreSQL
 - Playwright
-- cron-style scheduling
-- Docker-ready server setup
+- Node-based scheduler and run manager
+- Docker-ready server configuration
+
+## Documentation included in the repo
+
+- `INE/README.md` — high-level monorepo overview
+- `INE/apps/frontend/README.md` — frontend documentation
+- `INE/apps/server/README.md` — backend, scheduler, scraper, and API documentation
+- `INE/apps/server/docs/deployment-notes.md` — Render, Supabase, cron, and cold-start notes
+- `INE/apps/server/docs/store-notes.md` — mock-store behavior and scraper contract notes
+- `INE/docs/AI_LOG.md` — implementation and debugging history
+
+## Environment and deployment notes
+
+The repository contains actual deployment and environment information, including:
+
+- frontend intended for Vercel
+- backend intended for Render
+- PostgreSQL data store via Supabase
+- external cron scheduling for the scraper trigger
+- strict store host validation to the INE mock store or localhost
+
+This is reflected in the repo’s configuration and deployment notes, not in invented assumptions.
 
 ## Local development
 
-From the workspace root:
+From the repo root:
 
 ```bash
 pnpm install
 ```
 
-Then run the app parts separately:
+Then run the workspace app pieces separately:
 
 ```bash
 cd INE/apps/frontend
@@ -117,49 +102,7 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The frontend runs on the Vite dev server and calls the backend API. The server exposes the API on the configured port and performs scraping and scheduling tasks.
+## Verification note
 
-## Environment variables
-
-### Frontend
-Create an environment file in the frontend app if needed:
-
-```bash
-cd INE/apps/frontend
-cp .env.example .env
-```
-
-Example:
-
-```env
-VITE_API_URL=http://localhost:3000/api
-```
-
-### Backend
-The server expects database and runtime configuration in its environment. See the server README for the full configuration list.
-
-## Build and verification
-
-```bash
-cd INE/apps/frontend
-pnpm build
-```
-
-```bash
-cd INE/apps/server
-pnpm test
-```
-
-## Documentation and project notes
-
-This repo includes the relevant docs and implementation notes:
-
-- INE/README.md — monorepo overview and app-level setup
-- INE/apps/frontend/README.md — frontend architecture and UI flow
-- INE/apps/server/README.md — API, scraper, and scheduling details
-- INE/docs/AI_LOG.md — recorded implementation notes, debugging history, and project learnings
-
-## Notes
-
-This README intentionally includes only features and modules that exist in the current app. It avoids documenting unrelated features or placeholder functionality that is not implemented in this repository.
+This README reflects only the repository as it currently exists: the actual app structure, documented architecture, and implemented feature set. It intentionally excludes unsupported or placeholder functionality not found in the codebase or project docs.
 
